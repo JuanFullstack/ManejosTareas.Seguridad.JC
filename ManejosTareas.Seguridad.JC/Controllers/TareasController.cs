@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ManejosTareas.Seguridad.JC.Servicios;
+using ManejosTareas.Seguridad.JC.Models;
+using AutoMapper.QueryableExtensions;
+using AutoMapper;
 
 namespace ManejosTareas.Seguridad.JC.Controllers
 {
@@ -11,44 +14,47 @@ namespace ManejosTareas.Seguridad.JC.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IServicioUsuarios servicioUsuarios;
-        //private readonly IMapper mapper;
+        private readonly IMapper mapper;
 
-        //agregar despues parametro IMapper mapper 
-        public TareasController(ApplicationDbContext context,IServicioUsuarios servicioUsuarios) { 
+       // agregar despues parametro IMapper mapper
+        public TareasController(ApplicationDbContext context, IServicioUsuarios servicioUsuarios , IMapper mapper)
+        {
             this.context = context;
             this.servicioUsuarios = servicioUsuarios;
-            //this.mapper = mapper;
+            this.mapper = mapper;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<List<TareaDTO>>> Get()
-        //{
-        //    var usuarioId = servicioUsuarios.ObtenerUsuarioId();
-        //    var tareas = await context.Tareas
-        //        .Where(t => t.UsuarioCreacionId == usuarioId)
-        //        .OrderBy(t => t.Orden)
-        //        .ProjectTo<TareaDTO>(mapper.ConfigurationProvider)
-        //        .ToListAsync();
+        [HttpGet]
+        public async Task<ActionResult<List<TareaDTO>>> Get()
+        {
+            
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+            var tareas = await context.Tareas
+                .Where(t => t.UsuarioCreacionId == usuarioId)
+                .OrderBy(t => t.Orden)
+                .ProjectTo<TareaDTO>(mapper.ConfigurationProvider)
+                .ToListAsync();
 
-        //    return tareas;
-        //}
+            return tareas;
+        }
 
-        //[HttpGet("{id:int}")]
-        //public async Task<ActionResult<Tarea>> Get(int id)
-        //{
-        //    var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-        //    var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
-        //    t.UsuarioCreacionId == usuarioId);
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Tarea>> Get(int id)
+        {
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-        //    if (tarea is null)
-        //    {
-        //        return NotFound();
-        //    }
+            var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
+            t.UsuarioCreacionId == usuarioId);
 
-        //    return tarea;
+            if (tarea is null)
+            {
+                return NotFound();
+            }
 
-        //}
+            return tarea;
+
+        }
 
         [HttpPost]
         public async Task<ActionResult<Tarea>> Post([FromBody] string titulo)
@@ -78,75 +84,75 @@ namespace ManejosTareas.Seguridad.JC.Controllers
             return tarea;
         }
 
-        //[HttpPut("{id:int}")]
-        //public async Task<IActionResult> EditarTarea(int id, [FromBody] TareaEditarDTO tareaEditarDTO)
-        //{
-        //    var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> EditarTarea(int id, [FromBody] TareaEditarDTO tareaEditarDTO)
+        {
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-        //    var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
-        //    t.UsuarioCreacionId == usuarioId);
+            var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
+            t.UsuarioCreacionId == usuarioId);
 
-        //    if (tarea is null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (tarea is null)
+            {
+                return NotFound();
+            }
 
-        //    tarea.Titulo = tareaEditarDTO.Titulo;
-        //    tarea.Descripcion = tareaEditarDTO.Descripcion;
+            tarea.Titulo = tareaEditarDTO.Titulo;
+            tarea.Descripcion = tareaEditarDTO.Descripcion;
 
-        //    await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-        //    return Ok();
-        //}
+            return Ok();
+        }
 
-        //[HttpDelete("{id:int}")]
-        //public async Task<ActionResult> Delete(int id)
-        //{
-        //    var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-        //    var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
-        //    t.UsuarioCreacionId == usuarioId);
+            var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
+            t.UsuarioCreacionId == usuarioId);
 
-        //    if (tarea is null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (tarea is null)
+            {
+                return NotFound();
+            }
 
-        //    context.Remove(tarea);
-        //    await context.SaveChangesAsync();
-        //    return Ok();
-        //}
+            context.Remove(tarea);
+            await context.SaveChangesAsync();
+            return Ok();
+        }
 
 
-        //[HttpPost("ordenar")]
-        //public async Task<IActionResult> Ordenar([FromBody] int[] ids)
-        //{
-        //    var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+        [HttpPost("ordenar")]
+        public async Task<IActionResult> Ordenar([FromBody] int[] ids)
+        {
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-        //    var tareas = await context.Tareas
-        //        .Where(t => t.UsuarioCreacionId == usuarioId).ToListAsync();
+            var tareas = await context.Tareas
+                .Where(t => t.UsuarioCreacionId == usuarioId).ToListAsync();
 
-        //    var tareasId = tareas.Select(t => t.Id);
+            var tareasId = tareas.Select(t => t.Id);
 
-        //    var idsTareasNoPertenecenAlUsuario = ids.Except(tareasId).ToList();
+            var idsTareasNoPertenecenAlUsuario = ids.Except(tareasId).ToList();
 
-        //    if (idsTareasNoPertenecenAlUsuario.Any())
-        //    {
-        //        return Forbid();
-        //    }
+            if (idsTareasNoPertenecenAlUsuario.Any())
+            {
+                return Forbid();
+            }
 
-        //    var tareasDiccionario = tareas.ToDictionary(x => x.Id);
+            var tareasDiccionario = tareas.ToDictionary(x => x.Id);
 
-        //    for (int i = 0; i < ids.Length; i++)
-        //    {
-        //        var id = ids[i];
-        //        var tarea = tareasDiccionario[id];
-        //        tarea.Orden = i + 1;
-        //    }
+            for (int i = 0; i < ids.Length; i++)
+            {
+                var id = ids[i];
+                var tarea = tareasDiccionario[id];
+                tarea.Orden = i + 1;
+            }
 
-        //    await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-        //    return Ok();
-        //}
+            return Ok();
+        }
     }
 }

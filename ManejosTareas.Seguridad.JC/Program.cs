@@ -50,7 +50,7 @@ builder.Services.PostConfigure<CookieAuthenticationOptions>(IdentityConstants.Ap
 
 // Agrego servicios personalizados
 builder.Services.AddTransient<IServicioUsuarios, ServicioUsuarios>();
-//builder.Services.AddAutoMapper(typeof(Program)); // Configuración de AutoMapper
+builder.Services.AddAutoMapper(typeof(Program)); // Configuración de AutoMapper
 
 var app = builder.Build();
 

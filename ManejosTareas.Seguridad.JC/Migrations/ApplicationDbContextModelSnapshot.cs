@@ -38,11 +38,9 @@ namespace ManejosTareas.Seguridad.JC.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Titulo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Url")
-                        .IsRequired()
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
@@ -60,7 +58,6 @@ namespace ManejosTareas.Seguridad.JC.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Orden")
@@ -88,7 +85,6 @@ namespace ManejosTareas.Seguridad.JC.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("FechaCreacion")
@@ -103,7 +99,6 @@ namespace ManejosTareas.Seguridad.JC.Migrations
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("UsuarioCreacionId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -337,9 +332,7 @@ namespace ManejosTareas.Seguridad.JC.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "UsuarioCreacion")
                         .WithMany()
-                        .HasForeignKey("UsuarioCreacionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UsuarioCreacionId");
 
                     b.Navigation("UsuarioCreacion");
                 });

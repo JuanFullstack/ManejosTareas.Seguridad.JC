@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ManejosTareas.Seguridad.JC.Migrations
 {
     /// <inheritdoc />
-    public partial class Tareas : Migration
+    public partial class PrimeraMigracion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -163,10 +163,10 @@ namespace ManejosTareas.Seguridad.JC.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Titulo = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Orden = table.Column<int>(type: "int", nullable: false),
                     FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UsuarioCreacionId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UsuarioCreacionId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -175,9 +175,56 @@ namespace ManejosTareas.Seguridad.JC.Migrations
                         name: "FK_Tareas_AspNetUsers_UsuarioCreacionId",
                         column: x => x.UsuarioCreacionId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArchivosAdjuntos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TareaId = table.Column<int>(type: "int", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Titulo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Orden = table.Column<int>(type: "int", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArchivosAdjuntos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ArchivosAdjuntos_Tareas_TareaId",
+                        column: x => x.TareaId,
+                        principalTable: "Tareas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Pasos",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TareaId = table.Column<int>(type: "int", nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Realizado = table.Column<bool>(type: "bit", nullable: false),
+                    Orden = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pasos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Pasos_Tareas_TareaId",
+                        column: x => x.TareaId,
+                        principalTable: "Tareas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArchivosAdjuntos_TareaId",
+                table: "ArchivosAdjuntos",
+                column: "TareaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -219,6 +266,11 @@ namespace ManejosTareas.Seguridad.JC.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Pasos_TareaId",
+                table: "Pasos",
+                column: "TareaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tareas_UsuarioCreacionId",
                 table: "Tareas",
                 column: "UsuarioCreacionId");
@@ -227,6 +279,9 @@ namespace ManejosTareas.Seguridad.JC.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ArchivosAdjuntos");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -243,10 +298,13 @@ namespace ManejosTareas.Seguridad.JC.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Tareas");
+                name: "Pasos");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Tareas");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

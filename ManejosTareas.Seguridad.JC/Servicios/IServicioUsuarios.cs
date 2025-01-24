@@ -8,7 +8,7 @@ namespace ManejosTareas.Seguridad.JC.Servicios
     }
 
     public class ServicioUsuarios : IServicioUsuarios
-    {
+    {   
         private HttpContext httpContext;
 
         public ServicioUsuarios(IHttpContextAccessor httpContextAccessor)
