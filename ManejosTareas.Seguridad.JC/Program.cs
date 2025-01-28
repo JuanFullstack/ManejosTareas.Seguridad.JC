@@ -25,7 +25,7 @@ builder.Services.AddControllersWithViews(opciones =>
     opciones.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 }); 
 
-// Configuro la base de datos para usar SQL Server
+// Configuro la base de datos para usar SQL Server 
 builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
     opciones.UseSqlServer("name=DefaultConnection"));
 
