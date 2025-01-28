@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using ManejosTareas.Seguridad.JC.Servicios;
+using System.Text.Json.Serialization;
 using ManejosTareas.Seguridad.JC.Models;
 
 
@@ -19,7 +20,10 @@ var politicaUsuariosAutenticados = new AuthorizationPolicyBuilder()
 builder.Services.AddControllersWithViews(opciones =>
 {
     opciones.Filters.Add(new AuthorizeFilter(politicaUsuariosAutenticados));
-});
+}).AddJsonOptions(opciones =>
+{
+    opciones.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+}); 
 
 // Configuro la base de datos para usar SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
